@@ -11,11 +11,26 @@
 /* ************************************************************************** */
 
 #include "minitalk.h"
+static void ft_desplay(void)
+{
+    ft_printf("\n");
+    ft_printf("\033[1;33m");
+    ft_printf("__________________________________   _________________________\n");
+    ft_printf("/   _____/\\_   _____/\\______   \\   \\ /   /\\_   _____/\\______   \\\n");
+    ft_printf("\\_____  \\  |    __)_  |       _/\\   Y   /  |    __)_  |       _/\n");
+    ft_printf("/        \\ |        \\ |    |   \\ \\     /   |        \\ |    |   \\\n");
+    ft_printf("/_______  //_______  / |____|_  /  \\___/   /_______  / |____|_  /\n");
+    ft_printf("        \\/         \\/         \\/                   \\/         \\/\n");
+    ft_printf("\033[0m");
+	ft_printf("abechcha minitalk:)");
+    ft_printf("\n");
+	ft_printf("sever pid --------->");
+}
 
 void	ft_sig_handler(int sig, siginfo_t *v, void *n)
 {
 	static char  	i;
-	static int	bits;
+	static int	index;
 	static int c_pid;
 	static int db;
 
@@ -27,31 +42,32 @@ void	ft_sig_handler(int sig, siginfo_t *v, void *n)
 	{
 		c_pid = v->si_pid;
 		i = 0;
-		bits = 0;
+		index = 0;
 	}
 	if (sig == SIGUSR1)
-		i |= (1 << bits);
+		i = i |(1 << index);
 	else if (sig == SIGUSR2)
-		i |= (0 << bits);
-	bits++;
-	if (bits == 8)
+		i = i |(0 << index);
+	index++;
+	if (index == 8)
 	{
 		ft_printf("%c", i);
 		i = 0;
-		bits = 0;
+		index = 0;
 	}
 }
 
 
 int	main()
 {
-	struct sigaction sa;
+	ft_desplay();
+	struct sigaction handler;
 	ft_printf("%d\n", getpid());
-    sa.sa_sigaction = ft_sig_handler;
-   	sa.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+    handler.sa_sigaction = ft_sig_handler;
+   	handler.sa_flags = SA_SIGINFO;
+	if (sigaction(SIGUSR1, &handler, NULL) == -1)
 		ft_print_error("sigaction can't change behvior of signal");
-	if (sigaction(SIGUSR2, &sa, NULL) == -1)
+	if (sigaction(SIGUSR2, &handler, NULL) == -1)
 		ft_print_error("sigaction can't change behvior of signal");
 	while (1)
 		pause();
